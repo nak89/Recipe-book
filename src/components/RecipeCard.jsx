@@ -1,9 +1,14 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
-function RecipeCard({ recipe }) {
+function RecipeCard({ recipe, onRemove }) {
   const [menuOpen, setMenuOpen] = useState(false)
-
+  const navigate = useNavigate()
+  
+  function handleCopyClick() {
+    setMenuOpen(false)
+    navigate('/recipe/new', { state: { prefillData: recipe } })
+  }
   return (
     <div className="relative border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
       <Link to={`/recipe/${recipe.id}/prep`}>
@@ -41,13 +46,16 @@ function RecipeCard({ recipe }) {
             </Link>
             <button
               className="block w-full text-left px-4 py-2 hover:bg-gray-50"
-              onClick={() => setMenuOpen(false)}
+              onClick = {handleCopyClick}
             >
               Copy
             </button>
             <button
               className="block w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600"
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                setMenuOpen(false)
+                onRemove(recipe.id)
+            }}
             >
               Remove
             </button>
