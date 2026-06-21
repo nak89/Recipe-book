@@ -1,16 +1,13 @@
-import RecipeCard from './components/RecipeCard'
-import { recipes } from './data/recipes'
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import HomePage from './pages/HomePage'
 
 function App() {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">My Recipe Book</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {recipes.map((recipe) => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
-        ))}
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path ="/" element={<HomePage />} />
+      </Routes>
+    </BrowserRouter>  
   )
 }
 
