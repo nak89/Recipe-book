@@ -1,10 +1,24 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 function RecipeCard({ recipe, onRemove }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const menuRef = useRef(null)
   
+  useEffect(() => {
+    function handleClickOutside(event){
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
   function handleCopyClick() {
     setMenuOpen(false)
     navigate('/recipe/new', { state: { prefillData: recipe } })
@@ -27,7 +41,7 @@ function RecipeCard({ recipe, onRemove }) {
         </div>
       </Link>
 
-      <div className="absolute top-2 right-2">
+      <div className="absolute top-2 right-2" ref={menuRef}>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="w-8 h-8 flex items-center justify-center rounded-full bg-white/90 hover:bg-white shadow text-gray-700 text-lg leading-none"

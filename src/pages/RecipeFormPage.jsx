@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams, Link } from 'react-router-dom'
 import IngredientRow from '../components/IngredientRow'
 import StepInput from '../components/StepInput'
 import { UNITS } from '../data/units'
@@ -225,6 +225,9 @@ function RecipeFormPage({ recipes, onSave }) {
         <button type="button" onClick={handleSave} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
         Save Recipe
         </button>
+        <Link to="/" className="px-6 py-2 rounded-lg border hover:bg-gray-50 text-gray-700">
+            Cancel
+        </Link>
       </div>
     </div>
   )
