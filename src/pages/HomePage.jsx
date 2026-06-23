@@ -1,15 +1,7 @@
-import { useState } from 'react'
 import AddRecipeCard from '../components/AddRecipeCard'
 import RecipeCard from '../components/RecipeCard'
-import { recipes as initialRecipes } from '../data/recipes'
 
-function HomePage() {
-    const [recipes, setRecipes] = useState(initialRecipes)
-
-    function handleRemove(id){
-        setRecipes(recipes.filter((recipe) => recipe.id !== id))
-    }
-
+function HomePage({recipes, onRemove}) {
     return (
     <div className="p-8">
         <h1 className="text-3xl font-bold mb-6">My Recipe Book</h1>
@@ -18,7 +10,7 @@ function HomePage() {
             <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
-                onRemove={handleRemove}
+                onRemove={onRemove}
             />
         ))}
         <AddRecipeCard />
