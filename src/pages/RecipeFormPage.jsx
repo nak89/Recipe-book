@@ -77,7 +77,33 @@ function RecipeFormPage({ recipes, onSave }) {
     JSON.stringify(a.steps) === JSON.stringify(b.steps)
   )
   }
+  function validateForm() {
+  const missing = []
+
+  if (!title.trim()) missing.push('Title')
+  if (totalMinutes === '') missing.push('Duration')
+  if (servings === '') missing.push('Servings')
+
+  const hasValidIngredient = ingredients.some(
+    (ing) => ing.name.trim() !== '' && ing.quantity !== ''
+  )
+  if (!hasValidIngredient) missing.push('Ingredients')
+
+  const hasValidTool = tools.some((tool) => tool.trim() !== '')
+  if (!hasValidTool) missing.push('Tools & Utensils')
+
+  const hasValidStep = steps.some((step) => step.instruction.trim() !== '')
+  if (!hasValidStep) missing.push('Steps')
+
+  return missing
+  }
     function handleSave() {
+    const missing = validateForm()
+    if (missing.length > 0) { 
+        setError(`Please fill in: ${missing.join(', ')}`)
+        return
+    }
+    
     const recipe = {
         id: existingRecipe ? existingRecipe.id : crypto.randomUUID(),
         title,
@@ -86,15 +112,19 @@ function RecipeFormPage({ recipes, onSave }) {
         difficulty,
         totalMinutes: Number(totalMinutes) || 0,
         servings: Number(servings) || 0,
-        ingredients: ingredients.map(({ name, quantity, unit }) => ({
-        name,
-        quantity: Number(quantity) || 0,
-        unit,
+        ingredients: ingredients
+        .filter((ing) => ing.name.trim() !== '')
+        .map(({ name, quantity, unit }) => ({
+            name,
+            quantity: Number(quantity) || 0,
+            unit,
         })),
         tools: tools.filter((tool) => tool.trim() !== ''),
-        steps: steps.map((step, index) => ({
-        stepNumber: index + 1,
-        instruction: step.instruction,
+        steps: steps
+        .filter((step) => step.instruction.trim() !== '')
+        .map((step, index) => ({
+            stepNumber: index + 1,
+            instruction: step.instruction,
         })),
     }
 

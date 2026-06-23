@@ -28,8 +28,8 @@ function App() {
         <Route path ="/" element={<HomePage recipes={recipes} onRemove={handleRemove} />} />
         <Route path ="/recipe/new" element={<RecipeFormPage recipes={recipes} onSave={handleSave} />} />
         <Route path ="/recipe/:id/edit" element={<RecipeFormPage recipes={recipes} onSave={handleSave} />} />
-        <Route path ="/recipe/:id/prep" element={<RecipePrepPage />} />
-        <Route path ="/recipe/:id/steps" element={<RecipeStepsPage />} />
+        <Route path="/recipe/:id/prep" element={<RecipePrepPage recipes={recipes} />} />
+        <Route path="/recipe/:id/steps" element={<RecipeStepsPage recipes={recipes} />} />
       </Routes>
     </BrowserRouter>  
   )
