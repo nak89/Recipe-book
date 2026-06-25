@@ -65,16 +65,22 @@ function RecipeFormPage({ recipes, onSave }) {
     setSteps(steps.map((step) => (step.id === stepId ? { ...step, instruction } : step)))
   }
   function isSameRecipe(a, b) {
+  const normalizeIngredients = (ings) => 
+    ings.map(({ name, quantity, unit}) => ({ name, quantity, unit}))
+  
+  const normalizeSteps = (steps) => 
+    steps.map(({ stepNumber, instruction}) => ({ stepNumber, instruction}))
+
   return (
     a.title.trim().toLowerCase() === b.title.trim().toLowerCase() &&
-    a.description.trim() === b.description.trim() &&
-    a.photoUrl.trim() === b.photoUrl.trim() &&
+    (a.description || '').trim() === (b.description || '').trim() &&
+    (a.photoUrl || '').trim() === (b.photoUrl || '').trim() &&
     a.difficulty === b.difficulty &&
     a.totalMinutes === b.totalMinutes &&
     a.servings === b.servings &&
-    JSON.stringify(a.ingredients) === JSON.stringify(b.ingredients) &&
+    JSON.stringify(normalizeIngredients(a.ingredients)) === JSON.stringify(normalizeIngredients(b.ingredients)) &&
     JSON.stringify(a.tools) === JSON.stringify(b.tools) &&
-    JSON.stringify(a.steps) === JSON.stringify(b.steps)
+    JSON.stringify(normalizeSteps(a.steps)) === JSON.stringify(normalizeSteps(b.steps))    
   )
   }
   function validateForm() {
@@ -97,7 +103,7 @@ function RecipeFormPage({ recipes, onSave }) {
 
   return missing
   }
-    function handleSave() {
+  async function handleSave() {
     const missing = validateForm()
     if (missing.length > 0) { 
         setError(`Please fill in: ${missing.join(', ')}`)
@@ -127,6 +133,13 @@ function RecipeFormPage({ recipes, onSave }) {
             instruction: step.instruction,
         })),
     }
+    const titleTaken = recipes.find(
+      (r) => r.id !== recipe.id && r.title.trim().toLowerCase() === recipe.title.trim().toLowerCase()
+    )
+    if (titleTaken) {
+      setError(`You already have a recipe titled "${titleTaken.title}". Please choose a different title.`)
+      return
+    }
 
     const duplicate = recipes.find((r) => r.id !== recipe.id && isSameRecipe(r, recipe))
     if (duplicate) {
@@ -135,8 +148,12 @@ function RecipeFormPage({ recipes, onSave }) {
     }
 
     setError('')
-    onSave(recipe)
-    navigate('/')
+    try {
+      await onSave(recipe)
+      navigate('/')
+    } catch (err){
+      // error already alerted inside onSave; stay on the form
+    }
     }
 
   return (
