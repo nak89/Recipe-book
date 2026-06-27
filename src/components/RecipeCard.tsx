@@ -1,14 +1,20 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import type { Recipe } from '../types/recipe'
 
-function RecipeCard({ recipe, onRemove }) {
+interface RecipeCardProps {
+  recipe: Recipe
+  onRemove: (id: string) => void
+}
+
+function RecipeCard({ recipe, onRemove }: RecipeCardProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
-  const menuRef = useRef(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   
   useEffect(() => {
-    function handleClickOutside(event){
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent){
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setMenuOpen(false)
       }
     }

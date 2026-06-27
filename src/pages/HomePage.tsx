@@ -1,7 +1,13 @@
 import AddRecipeCard from '../components/AddRecipeCard'
 import RecipeCard from '../components/RecipeCard'
+import type { Recipe } from '../types/recipe'
 
-function HomePage({recipes, onRemove}) {
+interface HomePageProps {
+    recipes: Recipe[]
+    onRemove: (id: string) => void
+}
+
+function HomePage({recipes, onRemove}: HomePageProps) {
     return (
     <div className="p-8">
         <h1 className="text-3xl font-bold mb-6">My Recipe Book</h1>

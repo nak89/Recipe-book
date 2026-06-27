@@ -1,6 +1,13 @@
-import { UNITS } from "../data/units";
+import { UNITS } from '../data/units';
+import type { FormIngredient } from '../types/recipe'
 
-function IngredientRow({ ingredient, onChange, onRemove }) {
+interface IngredientRowProps {
+    ingredient: FormIngredient
+    onChange: (id: string, field: keyof FormIngredient, value: string) => void 
+    onRemove: (id: string) => void
+}
+
+function IngredientRow({ ingredient, onChange, onRemove }: IngredientRowProps) {
     return (
         <div className="flex gap-2 items-start">
             <input 

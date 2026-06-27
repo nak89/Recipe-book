@@ -1,7 +1,12 @@
 import { useParams, Link } from 'react-router-dom'
+import type { Recipe } from '../types/recipe'
 
-function RecipeStepsPage({ recipes }) {
-    const { id } = useParams()
+interface RecipeStepsPageProps {
+    recipes: Recipe[]
+}
+
+function RecipeStepsPage({ recipes }: RecipeStepsPageProps) {
+    const { id } = useParams<{ id: string }>()
     const recipe = recipes.find((r) => r.id === id)
 
     if (!recipe) {
@@ -21,8 +26,8 @@ function RecipeStepsPage({ recipes }) {
             <ol className="space-y-3">
                 {recipe.steps.map((step) => (
                     <li key={step.stepNumber} className="flex gap-3">
-                        <span className="font-semibold text-gray-400">{step.stepNumber}</span>
-                        <span className="font-semibold text-gray-400">{step.instruction}</span>
+                        <span className="font-semibold text-gray-400">{step.stepNumber}.</span>
+                        <span className="text-gray-700">{step.instruction}</span>
                     </li>
                 ))}
             </ol>

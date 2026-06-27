@@ -4,13 +4,14 @@ import HomePage from './pages/HomePage'
 import RecipeFormPage from './pages/RecipeFormPage'
 import RecipePrepPage from './pages/RecipePrepPage'
 import RecipeStepsPage from './pages/RecipeStepsPage'
+import type { Recipe } from './types/recipe'
 
 const API_URL = 'http://localhost:3000'
 
 function App() {
-  const [recipes, setRecipes] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch(`${API_URL}/recipes`)
@@ -28,7 +29,7 @@ function App() {
       })
   }, [])
 
-  async function handleRemove(id) {
+  async function handleRemove(id: string) {
     try {
       const res = await fetch(`${API_URL}/recipes/${id}`, {
         method: 'DELETE',
@@ -36,11 +37,13 @@ function App() {
       if (!res.ok) throw new Error('Failed to delete recipe')
       setRecipes((prev) => prev.filter((recipe) => recipe.id !== id))
     } catch (err) {
-      alert(err.message)
+      if (err instanceof Error){
+        alert(err.message)
+      }
     }
   }
 
-  async function handleSave(recipe) {
+  async function handleSave(recipe: Recipe) {
     const isExisting = recipes.some((r) => r.id === recipe.id)
     const url = isExisting ? `${API_URL}/recipes/${recipe.id}` : `${API_URL}/recipes`
     const method = isExisting ? 'PUT' : 'POST'
@@ -61,7 +64,9 @@ function App() {
         return [...prev, savedRecipe]
       })
     } catch (err) {
-      alert(err.message)
+      if(err instanceof Error){
+        alert(err.message)
+      }
       throw err
     }
   }

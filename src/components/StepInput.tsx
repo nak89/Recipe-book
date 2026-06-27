@@ -1,4 +1,11 @@
-function StepInput({ stepNumber, instruction, onChange, onRemove }) {
+interface StepInputProps {
+  stepNumber: number
+  instruction: string 
+  onChange: (value: string) => void 
+  onRemove: () => void 
+}
+
+function StepInput({ stepNumber, instruction, onChange, onRemove }: StepInputProps) {
   return (
     <div className="flex gap-2 items-start">
       <div className="w-8 h-10 flex items-center justify-center text-sm font-semibold text-gray-500">

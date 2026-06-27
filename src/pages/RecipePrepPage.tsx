@@ -1,7 +1,12 @@
 import { useParams, Link} from 'react-router-dom'
+import type { Recipe } from '../types/recipe'
 
-function RecipePrepPage({ recipes }) {
-    const { id } = useParams()
+interface RecipePrepPageProps {
+    recipes: Recipe[]
+}
+
+function RecipePrepPage({ recipes }: RecipePrepPageProps) {
+    const { id } = useParams<{ id: string}>()
     const recipe = recipes.find((r) => r.id === id)
     
     if (!recipe){
@@ -15,7 +20,7 @@ function RecipePrepPage({ recipes }) {
             <h1 className="text-3xl font-bold mt-2">{recipe.title}</h1>
             <p className="text-gray-600 mt-1">{recipe.description}</p>
 
-            <div className="flex gap-4 text-sm text-gray-500mt mt-3">
+            <div className="flex gap-4 text-sm text-gray-500 mt-3">
                 <span>{recipe.difficulty}</span>
                 <span>•</span>
                 <span>{recipe.totalMinutes}</span>
