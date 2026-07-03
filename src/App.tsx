@@ -85,7 +85,25 @@ function App() {
       throw err
     }
   }
-
+    async function handleToggleFavourite(id: string, isFavourite: boolean) {
+      try {
+        const res = await fetch(`${API_URL}/recipes/${id}/favourite`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ isFavourite }),
+        })
+        if (!res.ok) throw new Error('Failed to update favourite')
+        const updatedRecipe: Recipe = await res.json()
+        setRecipes((prev) =>
+          prev.map((r) => (r.id === updatedRecipe.id ? updatedRecipe : r))
+        )
+      } catch (err) {
+        if (err instanceof Error) alert(err.message)
+      }
+    }
   const recipeContent = loading ? (
     <div className="p-8 text-center text-gray-500">Loading recipes...</div>
   ) : error ? (
@@ -103,7 +121,7 @@ function App() {
             <ProtectedRoute>
               {recipeContent ?? (
                 <Layout>
-                  <HomePage recipes={recipes} onRemove={handleRemove} />
+                  <HomePage recipes={recipes} onRemove={handleRemove} onToggleFavourite={handleToggleFavourite} />
                 </Layout>
               )}
             </ProtectedRoute>

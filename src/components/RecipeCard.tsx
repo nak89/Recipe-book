@@ -6,9 +6,10 @@ import ConfirmModal from './ConfirmModal'
 interface RecipeCardProps {
   recipe: Recipe
   onRemove: (id: string) => void
+  onToggleFavourite: (id: string, isFavourite: boolean) => void
 }
 
-function RecipeCard({ recipe, onRemove }: RecipeCardProps) {
+function RecipeCard({ recipe, onRemove, onToggleFavourite }: RecipeCardProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
   const menuRef = useRef<HTMLDivElement>(null)
@@ -41,9 +42,15 @@ function RecipeCard({ recipe, onRemove }: RecipeCardProps) {
         <div className='p-4'>
         <div className='flex items-start justify-between'>
           <h3 className='text-lg font-semibold'>{recipe.title}</h3>
-          {recipe.isFavourite && (
-            <span className='text-red-500 text-lg'>♥</span>
-          )}
+          <button onClick={(e) => {
+            e.preventDefault()
+            onToggleFavourite(recipe.id, !recipe.isFavourite)
+          }}
+          className="text-xl leading-none hover:scale-110 transition-transform"
+          title={recipe.isFavourite ? 'Remove from favourites' : 'Add to favourites'}
+          >
+            {recipe.isFavourite ? '♥' : '♡'}
+          </button>
         </div>
 
         <div className='flex gap-3 text-sm text-gray-600 mt-1'>
