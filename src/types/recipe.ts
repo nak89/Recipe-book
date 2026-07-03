@@ -1,5 +1,7 @@
 export type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced'
 
+export type Course = 'Starter' | 'Main' | 'Dessert'
+
 export interface Ingredient {
     id?: string
     name: string
@@ -21,6 +23,13 @@ export interface Recipe {
     difficulty: Difficulty
     totalMinutes: number
     servings: number 
+    cuisine?: string 
+    course?: Course 
+    isFavourite: boolean 
+    calories?: number 
+    protein?: number 
+    carbs?: number 
+    fat?: number 
     ingredients: Ingredient[]
     tools: string[]
     steps: Step[]

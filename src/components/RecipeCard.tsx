@@ -9,95 +9,99 @@ interface RecipeCardProps {
 }
 
 function RecipeCard({ recipe, onRemove }: RecipeCardProps) {
-  const [menuOpen, setMenuOpen] = useState<boolean>(false)
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
   const menuRef = useRef<HTMLDivElement>(null)
-
+  
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: MouseEvent){
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setMenuOpen(false)
       }
     }
+
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
   }, [])
 
   function handleCopyClick() {
     setMenuOpen(false)
     navigate('/recipe/new', { state: { prefillData: recipe } })
   }
-
   return (
-    <>
-      {showConfirm && (
-        <ConfirmModal
-          title='Remove Recipe'
-          message={`Are you sure you want to remove "${recipe.title}"? This cannot be undone.`}
-          confirmLabel='Remove'
-          onConfirm={() => {
-            setShowConfirm(false)
-            onRemove(recipe.id)
-          }}
-          onCancel={() => setShowConfirm(false)}
+    <div className="relative border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
+      <Link to={`/recipe/${recipe.id}/prep`}>
+        <img
+          src={recipe.photoUrl}
+          alt={recipe.title}
+          className="w-full h-40 object-cover"
         />
-      )}
-
-      <div className='relative border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition'>
-        <Link to={`/recipe/${recipe.id}/prep`}>
-          <img
-            src={recipe.photoUrl || undefined}
-            alt={recipe.title}
-            className='w-full h-40 object-cover'
-          />
-          <div className='p-4'>
-            <h3 className='text-lg font-semibold'>{recipe.title}</h3>
-            <div className='flex gap-3 text-sm text-gray-600 mt-1'>
-              <span>{recipe.difficulty}</span>
-              <span>•</span>
-              <span>{recipe.totalMinutes} min</span>
-            </div>
-          </div>
-        </Link>
-
-        <div className='absolute top-2 right-2' ref={menuRef}>
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className='w-8 h-8 flex items-center justify-center rounded-full bg-white/90 hover:bg-white shadow text-gray-700 text-lg leading-none'
-          >
-            ⋮
-          </button>
-
-          {menuOpen && (
-            <div className='absolute right-0 mt-1 w-32 bg-white border rounded-lg shadow-lg overflow-hidden text-sm z-10'>
-              <Link
-                to={`/recipe/${recipe.id}/edit`}
-                className='block px-4 py-2 hover:bg-gray-50'
-                onClick={() => setMenuOpen(false)}
-              >
-                Edit
-              </Link>
-              <button
-                className='block w-full text-left px-4 py-2 hover:bg-gray-50'
-                onClick={handleCopyClick}
-              >
-                Copy
-              </button>
-              <button
-                className='block w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600'
-                onClick={() => {
-                  setMenuOpen(false)
-                  setShowConfirm(true)
-                }}
-              >
-                Remove
-              </button>
-            </div>
+        <div className='p-4'>
+        <div className='flex items-start justify-between'>
+          <h3 className='text-lg font-semibold'>{recipe.title}</h3>
+          {recipe.isFavourite && (
+            <span className='text-red-500 text-lg'>♥</span>
           )}
         </div>
+
+        <div className='flex gap-3 text-sm text-gray-600 mt-1'>
+          <span>{recipe.difficulty}</span>
+          <span>•</span>
+          <span>{recipe.totalMinutes} min</span>
+          {recipe.cuisine && (
+            <>
+              <span>•</span>
+              <span>{recipe.cuisine}</span>
+            </>
+          )}
+        </div>
+
+        {recipe.course && (
+          <span className='inline-block mt-2 text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600'>
+            {recipe.course}
+          </span>
+        )}
+        </div>
+      </Link>
+
+      <div className="absolute top-2 right-2" ref={menuRef}>
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="w-8 h-8 flex items-center justify-center rounded-full bg-white/90 hover:bg-white shadow text-gray-700 text-lg leading-none"
+        >
+          ⋮
+        </button>
+
+        {menuOpen && (
+          <div className="absolute right-0 mt-1 w-32 bg-white border rounded-lg shadow-lg overflow-hidden text-sm z-10">
+            <Link
+              to={`/recipe/${recipe.id}/edit`}
+              className="block px-4 py-2 hover:bg-gray-50"
+              onClick={() => setMenuOpen(false)}
+            >
+              Edit
+            </Link>
+            <button
+              className="block w-full text-left px-4 py-2 hover:bg-gray-50"
+              onClick = {handleCopyClick}
+            >
+              Copy
+            </button>
+            <button
+              className="block w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600"
+              onClick={() => {
+                setMenuOpen(false)
+                onRemove(recipe.id)
+            }}
+            >
+              Remove
+            </button>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   )
 }
 

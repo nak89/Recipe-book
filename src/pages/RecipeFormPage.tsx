@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useLocation, useNavigate, useParams, Link } from 'react-router-dom'
 import IngredientRow from '../components/IngredientRow'
 import StepInput from '../components/StepInput'
-import { UNITS } from '../data/units'
-import type { Recipe, Difficulty, FormIngredient, FormStep } from '../types/recipe'
+import type { Recipe, Difficulty, FormIngredient, FormStep, Course } from '../types/recipe'
+import { CUISINES } from '../data/cuisines'
 
 interface LocationState {
   prefillData?: Recipe
@@ -44,6 +44,23 @@ function RecipeFormPage({ recipes, onSave }: RecipeFormPageProps) {
         }))
       : [{ id: crypto.randomUUID(), name: '', quantity: '', unit: 'cup' }]
   )
+  const [cuisine, setCuisine] = useState<string>(prefillData?.cuisine || '')
+  const [customCuisine, setCustomCuisine] = useState<string>('')
+  const [course, setCourse] = useState<Course | ''>(prefillData?.course || '')
+  const [isFavourite, setIsFavourite] = useState<boolean>(prefillData?.isFavourite || false)
+  const [calories, setCalories] = useState<string>(
+    prefillData?.calories !== undefined ? String(prefillData.calories) : ''
+  )
+  const [protein, setProtein] = useState<string>(
+    prefillData?.protein !== undefined ? String(prefillData.protein) : ''
+  )
+  const [carbs, setCarbs] = useState<string>(
+    prefillData?.carbs !== undefined ? String(prefillData.carbs) : ''
+  )
+  const [fat, setFat] = useState<string>(
+    prefillData?.fat !== undefined ? String(prefillData.fat) : ''
+  )
+
 
   function addIngredient() {
     setIngredients([...ingredients, { id: crypto.randomUUID(), name: '', quantity: '', unit: 'cup' }])
@@ -139,6 +156,13 @@ function RecipeFormPage({ recipes, onSave }: RecipeFormPageProps) {
       difficulty,
       totalMinutes: Number(totalMinutes) || 0,
       servings: Number(servings) || 0,
+      cuisine: cuisine === 'Other' ? customCuisine.trim() || 'Other' : cuisine || undefined,
+      course: course ||undefined,
+      isFavourite,
+      calories: calories !== '' ? Number(calories) : undefined, 
+      protein: protein !== '' ? Number(protein) : undefined, 
+      carbs: carbs !== '' ? Number(carbs) : undefined,
+      fat: fat !== '' ? Number(fat) : undefined,
       ingredients: ingredients
         .filter((ing) => ing.name.trim() !== '')
         .map(({ name, quantity, unit }) => ({
@@ -223,7 +247,60 @@ function RecipeFormPage({ recipes, onSave }: RecipeFormPageProps) {
             }} className="w-full border rounded-lg px-3 py-2" />
           </div>
         </div>
+        {/* Cuisine */}
+        <div>
+          <label className='block text-sm font-medium mb-1'>Cuisine</label>
+          <select
+            value={cuisine}
+            onChange={(e) => setCuisine(e.target.value)}
+            className='w-full border rounded-lg px-3 py-2'
+          >
+            <option value=''>Select cuisine (optional)</option>
+            {CUISINES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          {cuisine === 'Other' && (
+            <input
+              type='text'
+              placeholder='Enter your cuisine...'
+              value={customCuisine}
+              onChange={(e) => setCustomCuisine(e.target.value)}
+              className='w-full border rounded-lg px-3 py-2 mt-2'
+            />
+          )}
+        </div>
 
+        {/* Course */}
+        <div>
+          <label className='block text-sm font-medium mb-1'>Course</label>
+          <select
+            value={course}
+            onChange={(e) => setCourse(e.target.value as Course | '')}
+            className='w-full border rounded-lg px-3 py-2'
+          >
+            <option value=''>Select course (optional)</option>
+            <option value='Starter'>Starter</option>
+            <option value='Main'>Main</option>
+            <option value='Dessert'>Dessert</option>
+          </select>
+        </div>
+
+        {/* Favourite */}
+        <div className='flex items-center gap-2'>
+          <input
+            type='checkbox'
+            id='isFavourite'
+            checked={isFavourite}
+            onChange={(e) => setIsFavourite(e.target.checked)}
+            className='w-4 h-4'
+          />
+          <label htmlFor='isFavourite' className='text-sm font-medium'>
+            Mark as favourite
+          </label>
+        </div>
+
+        {/* Nutrition */}
         <div>
           <label className="block text-sm font-medium mb-2">Ingredients</label>
           <div className="space-y-2">
@@ -256,6 +333,65 @@ function RecipeFormPage({ recipes, onSave }: RecipeFormPageProps) {
           </div>
           <button type="button" onClick={addStep} className="mt-2 text-sm text-blue-600 hover:underline">+ Add Step</button>
         </div>
+        <div>
+          <label className='block text-sm font-medium mb-2'>
+            Nutritional Value <span className='text-gray-400 font-normal'>(optional, per serving)</span>
+          </label>
+          <div className='grid grid-cols-2 gap-4'>
+            <div>
+              <label className='block text-xs text-gray-500 mb-1'>Calories (kcal)</label>
+              <input
+                type='number'
+                min='0'
+                value={calories}
+                onChange={(e) => {
+                  const value = e.target.value
+                  if (value === '' || Number(value) >= 0) setCalories(value)
+                }}
+                className='w-full border rounded-lg px-3 py-2'
+              />
+            </div>
+            <div>
+              <label className='block text-xs text-gray-500 mb-1'>Protein (g)</label>
+              <input
+                type='number'
+                min='0'
+                value={protein}
+                onChange={(e) => {
+                  const value = e.target.value
+                  if (value === '' || Number(value) >= 0) setProtein(value)
+                }}
+                className='w-full border rounded-lg px-3 py-2'
+              />
+            </div>
+            <div>
+              <label className='block text-xs text-gray-500 mb-1'>Carbs (g)</label>
+              <input
+                type='number'
+                min='0'
+                value={carbs}
+                onChange={(e) => {
+                  const value = e.target.value
+                  if (value === '' || Number(value) >= 0) setCarbs(value)
+                }}
+                className='w-full border rounded-lg px-3 py-2'
+              />
+            </div>
+            <div>
+              <label className='block text-xs text-gray-500 mb-1'>Fat (g)</label>
+              <input
+                type='number'
+                min='0'
+                value={fat}
+                onChange={(e) => {
+                  const value = e.target.value
+                  if (value === '' || Number(value) >= 0) setFat(value)
+                }}
+                className='w-full border rounded-lg px-3 py-2'
+              />
+            </div>
+          </div>
+        </div>
         {error && (
         <p className="text-red-600 text-sm">{error}</p>
         )}
@@ -263,9 +399,11 @@ function RecipeFormPage({ recipes, onSave }: RecipeFormPageProps) {
         <button type="button" onClick={handleSave} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
         Save Recipe
         </button>
+        <div className='flex gap-3 items-center'>
         <Link to="/" className="px-6 py-2 rounded-lg border hover:bg-gray-50 text-gray-700">
             Cancel
         </Link>
+        </div>
       </div>
     </div>
   )

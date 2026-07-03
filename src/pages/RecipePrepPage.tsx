@@ -36,7 +36,37 @@ function RecipePrepPage({ recipes }: RecipePrepPageProps) {
                     </li>
                 ))}
             </ul>
-
+            {(recipe.calories || recipe.protein || recipe.carbs || recipe.fat) && (
+            <div className='mt-6'>
+                <h2 className='text-xl font-semibold mb-2'>Nutrition per serving</h2>
+                <div className='grid grid-cols-2 gap-3 sm:grid-cols-4'>
+                {recipe.calories !== undefined && (
+                    <div className='bg-gray-50 rounded-lg p-3 text-center'>
+                    <p className='text-lg font-semibold'>{recipe.calories}</p>
+                    <p className='text-xs text-gray-500'>kcal</p>
+                    </div>
+                )}
+                {recipe.protein !== undefined && (
+                    <div className='bg-gray-50 rounded-lg p-3 text-center'>
+                    <p className='text-lg font-semibold'>{recipe.protein}g</p>
+                    <p className='text-xs text-gray-500'>Protein</p>
+                    </div>
+                )}
+                {recipe.carbs !== undefined && (
+                    <div className='bg-gray-50 rounded-lg p-3 text-center'>
+                    <p className='text-lg font-semibold'>{recipe.carbs}g</p>
+                    <p className='text-xs text-gray-500'>Carbs</p>
+                    </div>
+                )}
+                {recipe.fat !== undefined && (
+                    <div className='bg-gray-50 rounded-lg p-3 text-center'>
+                    <p className='text-lg font-semibold'>{recipe.fat}g</p>
+                    <p className='text-xs text-gray-500'>Fat</p>
+                    </div>
+                )}
+                </div>
+            </div>
+            )}
             <h2 className="text-xl font-semibold mt-6 mb-2">Tools & Utensils</h2>
             <ul className="space-y-1">
                 {recipe.tools.map((tool, index) => (
