@@ -18,6 +18,9 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Fetch recipes for the authenticated user whenever the `token` changes.
+  // - Shows a loading state while fetching
+  // - Stores server errors in `error`
   useEffect(() => {
     if (!token) {
       setLoading(false)
@@ -45,6 +48,7 @@ function App() {
   }, [token])
 
   async function handleRemove(id: string) {
+    // Delete a recipe on the server and remove it from local state
     try {
       const res = await fetch(`${API_URL}/recipes/${id}`, {
         method: 'DELETE',
@@ -58,6 +62,7 @@ function App() {
   }
 
   async function handleSave(recipe: Recipe) {
+    // Create or update a recipe depending on whether it already exists
     const isExisting = recipes.some((r) => r.id === recipe.id)
     const url = isExisting ? `${API_URL}/recipes/${recipe.id}` : `${API_URL}/recipes`
     const method = isExisting ? 'PUT' : 'POST'
@@ -86,6 +91,8 @@ function App() {
     }
   }
     async function handleToggleFavourite(id: string, isFavourite: boolean) {
+      // Toggle the `isFavourite` flag for a recipe on the server,
+      // then update the local copy with the response from the API.
       try {
         const res = await fetch(`${API_URL}/recipes/${id}/favourite`, {
           method: 'PATCH',
@@ -109,6 +116,10 @@ function App() {
   ) : error ? (
     <div className="p-8 text-center text-red-600">Error: {error}</div>
   ) : null
+
+  // `recipeContent` holds a small UI placeholder used while recipes load
+  // or when an error occurred. Routes render this when the app is not
+  // ready to show the main content.
 
   return (
     <BrowserRouter>

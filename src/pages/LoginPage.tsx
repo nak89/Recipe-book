@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -11,7 +11,9 @@ function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
 
-  async function handleSubmit() {
+  async function handleSubmit(e?: FormEvent) {
+    // Prevent the default form submit behavior when triggered by Enter
+    if (e) e.preventDefault()
     if (!email || !password) {
       setError('Email and password are required')
       return
@@ -36,7 +38,7 @@ function LoginPage() {
     <div className="p-8 max-w-sm mx-auto">
       <h1 className="text-3xl font-bold mb-6">Log In</h1>
 
-      <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-1">Email</label>
           <input
@@ -60,8 +62,7 @@ function LoginPage() {
         {error && <p className="text-red-600 text-sm">{error}</p>}
 
         <button
-          type="button"
-          onClick={handleSubmit}
+          type="submit"
           disabled={loading}
           className="w-full bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
         >
@@ -74,7 +75,7 @@ function LoginPage() {
             Sign up
           </Link>
         </p>
-      </div>
+      </form>
     </div>
   )
 }
