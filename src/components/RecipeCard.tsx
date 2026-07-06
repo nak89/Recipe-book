@@ -10,6 +10,7 @@ interface RecipeCardProps {
 }
 
 function RecipeCard({ recipe, onRemove, onToggleFavourite }: RecipeCardProps) {
+  const [showConfirm, setShowConfirm] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
   const menuRef = useRef<HTMLDivElement>(null)
@@ -32,6 +33,19 @@ function RecipeCard({ recipe, onRemove, onToggleFavourite }: RecipeCardProps) {
     navigate('/recipe/new', { state: { prefillData: recipe } })
   }
   return (
+  <>
+    {showConfirm && (
+      <ConfirmModal
+        title='Remove Recipe'
+        message={`Are you sure you want to remove "${recipe.title}"? This cannot be undone.`}
+        confirmLabel='Remove'
+        onConfirm={() => {
+          setShowConfirm(false)
+          onRemove(recipe.id)
+        }}
+        onCancel={() => setShowConfirm(false)}
+      />
+    )}
     <div className="relative border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
       <Link to={`/recipe/${recipe.id}/prep`}>
         <img
@@ -97,18 +111,19 @@ function RecipeCard({ recipe, onRemove, onToggleFavourite }: RecipeCardProps) {
               Copy
             </button>
             <button
-              className="block w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600"
-              onClick={() => {
-                setMenuOpen(false)
-                onRemove(recipe.id)
+            className='block w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600'
+            onClick={() => {
+              setMenuOpen(false)
+              setShowConfirm(true)
             }}
             >
-              Remove
-            </button>
+            Remove
+          </button>
           </div>
         )}
       </div>
     </div>
+    </>
   )
 }
 
