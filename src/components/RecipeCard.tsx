@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Recipe } from '../types/recipe'
 import ConfirmModal from './ConfirmModal'
-
+import { memo } from 'react'
 interface RecipeCardProps {
   recipe: Recipe
   onRemove: (id: string) => void
@@ -127,4 +127,4 @@ function RecipeCard({ recipe, onRemove, onToggleFavourite }: RecipeCardProps) {
   )
 }
 
-export default RecipeCard
+export default memo(RecipeCard)
