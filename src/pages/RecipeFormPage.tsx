@@ -4,6 +4,9 @@ import IngredientRow from '../components/IngredientRow'
 import StepInput from '../components/StepInput'
 import type { Recipe, Difficulty, FormIngredient, FormStep, Course } from '../types/recipe'
 import { CUISINES } from '../data/cuisines'
+import { useAuth } from '../context/AuthContext'
+import { API_URL } from '../config'
+
 
 interface LocationState {
   prefillData?: Recipe
@@ -25,7 +28,12 @@ function RecipeFormPage({ recipes, onSave }: RecipeFormPageProps) {
 
   const [title, setTitle] = useState<string>(prefillData?.title || '')
   const [description, setDescription] = useState<string>(prefillData?.description || '')
-  const [photoUrl, setPhotoUrl] = useState<string>(prefillData?.photoUrl || '')
+  
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string>(prefillData?.photoUrl || '')
+  const [uploading, setUploading] = useState<boolean>(false)
+  const [uploadError, setUploadError] = useState<string>('')
+  
   const [difficulty, setDifficulty] = useState<Difficulty>(prefillData?.difficulty || 'Beginner')
   const [totalMinutes, setTotalMinutes] = useState<string>(
     prefillData?.totalMinutes !== undefined ? String(prefillData.totalMinutes) : ''
@@ -122,6 +130,39 @@ function RecipeFormPage({ recipes, onSave }: RecipeFormPageProps) {
     )
   }
 
+    const { token } = useAuth()
+
+    async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+      const file = e.target.files?.[0]
+      if (!file) return
+
+      setPhotoFile(file)
+      setPhotoPreview(URL.createObjectURL(file))
+      setUploadError('')
+      setUploading(true)
+
+      try {
+        const formData = new FormData()
+        formData.append('photo', file)
+
+        const res = await fetch(`${API_URL}/upload`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        })
+
+        if (!res.ok) throw new Error('Failed to upload photo')
+        const data = await res.json()
+        setPhotoPreview(data.url)
+      } catch (err) {
+        if (err instanceof Error) setUploadError(err.message)
+        setPhotoPreview('')
+        setPhotoFile(null)
+      } finally {
+        setUploading(false)
+      }
+    }
+
   function validateForm(): string[] {
     const missing: string[] = []
 
@@ -152,7 +193,7 @@ function RecipeFormPage({ recipes, onSave }: RecipeFormPageProps) {
       id: existingRecipe ? existingRecipe.id : crypto.randomUUID(),
       title,
       description,
-      photoUrl,
+      photoUrl: photoPreview || undefined,
       difficulty,
       totalMinutes: Number(totalMinutes) || 0,
       servings: Number(servings) || 0,
@@ -219,8 +260,44 @@ function RecipeFormPage({ recipes, onSave }: RecipeFormPageProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Photo URL</label>
-          <input type="text" value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} className="w-full border rounded-lg px-3 py-2" />
+          <label className='block text-sm font-medium mb-1'>Photo</label>
+
+          {photoPreview && (
+            <div className='mb-2 relative'>
+              <img
+                src={photoPreview}
+                alt='Recipe preview'
+                className='w-full h-48 object-cover rounded-lg'
+              />
+              <button
+                type='button'
+                onClick={() => {
+                  setPhotoPreview('')
+                  setPhotoFile(null)
+                }}
+                className='absolute top-2 right-2 bg-white/90 hover:bg-white rounded-full w-7 h-7 flex items-center justify-center text-gray-700 shadow text-sm'
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
+          <label className='flex items-center gap-2 cursor-pointer w-fit'>
+            <span className='px-4 py-2 border rounded-lg text-sm hover:bg-gray-50'>
+              {uploading ? 'Uploading...' : photoPreview ? 'Change photo' : 'Choose photo'}
+            </span>
+            <input
+              type='file'
+              accept='image/*'
+              onChange={handlePhotoChange}
+              disabled={uploading}
+              className='hidden'
+            />
+          </label>
+
+          {uploadError && (
+            <p className='text-red-600 text-sm mt-1'>{uploadError}</p>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-4">

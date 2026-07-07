@@ -36,13 +36,14 @@ function HomePage({ recipes, onRemove, onToggleFavourite }: HomePageProps) {
       />
 
       {filteredRecipes.length === 0 ? (
-        <div className='text-center text-gray-500 py-16'>
+          <div className='text-center text-gray-500 py-16'>
           {recipes.length === 0
             ? 'No recipes yet — add your first one!'
             : 'No recipes match your filters.'}
         </div>
       ) : (
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
+            <AddRecipeCard />
           {filteredRecipes.map((recipe) => (
             <RecipeCard
               key={recipe.id}
@@ -51,7 +52,6 @@ function HomePage({ recipes, onRemove, onToggleFavourite }: HomePageProps) {
               onToggleFavourite={onToggleFavourite}
             />
           ))}
-          <AddRecipeCard />
         </div>
       )}
     </div>
