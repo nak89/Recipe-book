@@ -11,12 +11,14 @@ import { useAuth } from './context/AuthContext'
 import { API_URL } from './config'
 import type { Recipe } from './types/recipe'
 import Layout from './components/Layout'
+import { Link } from 'react-router-dom'
 
 function App() {
   const { token } = useAuth()
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [isAuthError, setIsAuthError] = useState<boolean>(false)
 
   // Fetch recipes for the authenticated user whenever the `token` changes.
   // - Shows a loading state while fetching
@@ -29,17 +31,25 @@ function App() {
 
     setLoading(true)
     setError(null)
+    setIsAuthError(false)
 
     fetch(`${API_URL}/recipes`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch recipes')
+        if (!res.ok){
+          if (res.status === 401) {
+            setIsAuthError(true)
+            throw new Error('Your session has expired')
+          }
+          throw new Error('Failed to fetch recipes')
+        } 
         return res.json()
       })
       .then((data) => {
         setRecipes(data)
         setLoading(false)
+        setIsAuthError(false)
       })
       .catch((err) => {
         if (err instanceof Error) setError(err.message)
@@ -113,7 +123,19 @@ function App() {
     }
   const recipeContent = loading ? (
     <div className="p-8 text-center text-gray-500">Loading recipes...</div>
-  ) : error ? (
+  ) : isAuthError ? (
+    <div className='p-8 text-center'>
+    <p className='text-yellow-600 mb-4'>{error}</p>
+    <Link
+      to='/login'
+      className='inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700'
+    >
+      Go to login page
+    </Link>
+    </div>
+  ):
+   error ?
+  (
     <div className="p-8 text-center text-red-600">Error: {error}</div>
   ) : null
 

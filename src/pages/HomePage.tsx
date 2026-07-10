@@ -40,18 +40,19 @@ function HomePage({ recipes, onRemove, onToggleFavourite }: HomePageProps) {
           {recipes.length === 0
             ? 'No recipes yet — add your first one!'
             : 'No recipes match your filters.'}
+          <AddRecipeCard />
         </div>
       ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
-            <AddRecipeCard />
+              <AddRecipeCard />
           {filteredRecipes.map((recipe) => (
-            <RecipeCard
+              <RecipeCard
               key={recipe.id}
               recipe={recipe}
               onRemove={onRemove}
               onToggleFavourite={onToggleFavourite}
-            />
-          ))}
+              />
+            ))}
         </div>
       )}
     </div>

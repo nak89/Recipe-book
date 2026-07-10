@@ -8,7 +8,7 @@ export const CUISINES = [
   'Indian',
   'Japanese',
   'Chinese',
-  'Thai',
+  'Cambodia',
   'Greek',
   'Spanish',
   'Middle Eastern',
