@@ -46,28 +46,37 @@ function RecipeCard({ recipe, onRemove, onToggleFavourite }: RecipeCardProps) {
         onCancel={() => setShowConfirm(false)}
       />
     )}
-    <div className="relative border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
+    <div className="app-card relative overflow-hidden rounded-[1.75rem] transition-transform hover:-translate-y-1">
       <Link to={`/recipe/${recipe.id}/prep`}>
-        <img
-          src={recipe.photoUrl}
-          alt={recipe.title}
-          className="w-full h-40 object-cover"
-        />
-        <div className='p-4'>
-        <div className='flex items-start justify-between'>
-          <h3 className='text-lg font-semibold'>{recipe.title}</h3>
+        {recipe.photoUrl ? (
+          <img
+            src={recipe.photoUrl}
+            alt={recipe.title}
+            className="h-44 w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-44 w-full items-end bg-[var(--surface-soft)] p-5">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] app-muted">Recipe card</p>
+              <p className="mt-2 text-lg font-semibold">No photo yet</p>
+            </div>
+          </div>
+        )}
+        <div className='p-5'>
+        <div className='flex items-start justify-between gap-4'>
+          <h3 className='text-lg font-semibold leading-tight'>{recipe.title}</h3>
           <button onClick={(e) => {
             e.preventDefault()
             onToggleFavourite(recipe.id, !recipe.isFavourite)
           }}
-          className="text-xl leading-none hover:scale-110 transition-transform"
+          className={`no-accent-hover text-xl leading-none transition-transform hover:scale-110 ${recipe.isFavourite ? 'text-red-500' : 'text-[var(--text)]'}`}
           title={recipe.isFavourite ? 'Remove from favourites' : 'Add to favourites'}
           >
             {recipe.isFavourite ? '♥' : '♡'}
           </button>
         </div>
 
-        <div className='flex gap-3 text-sm text-gray-600 mt-1'>
+        <div className='mt-2 flex flex-wrap gap-3 text-sm app-muted'>
           <span>{recipe.difficulty}</span>
           <span>•</span>
           <span>{recipe.totalMinutes} min</span>
@@ -80,7 +89,7 @@ function RecipeCard({ recipe, onRemove, onToggleFavourite }: RecipeCardProps) {
         </div>
 
         {recipe.course && (
-          <span className='inline-block mt-2 text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600'>
+          <span className='app-chip inline-block mt-3 rounded-full px-2 py-1 text-xs'>
             {recipe.course}
           </span>
         )}
@@ -90,28 +99,28 @@ function RecipeCard({ recipe, onRemove, onToggleFavourite }: RecipeCardProps) {
       <div className="absolute top-2 right-2" ref={menuRef}>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="w-8 h-8 flex items-center justify-center rounded-full bg-white/90 hover:bg-white shadow text-gray-700 text-lg leading-none"
+          className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--surface-strong)] shadow text-[var(--text)] text-lg leading-none border border-[var(--border)]"
         >
           ⋮
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 mt-1 w-32 bg-white border rounded-lg shadow-lg overflow-hidden text-sm z-10">
+          <div className="absolute right-0 mt-1 w-32 app-card overflow-hidden rounded-xl text-sm z-10">
             <Link
               to={`/recipe/${recipe.id}/edit`}
-              className="block px-4 py-2 hover:bg-gray-50"
+              className="block px-4 py-2 hover:bg-[var(--accent-soft)]"
               onClick={() => setMenuOpen(false)}
             >
               Edit
             </Link>
             <button
-              className="block w-full text-left px-4 py-2 hover:bg-gray-50"
+              className="block w-full text-left px-4 py-2 hover:bg-[var(--accent-soft)]"
               onClick = {handleCopyClick}
             >
               Copy
             </button>
             <button
-            className='block w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600'
+            className='block w-full text-left px-4 py-2 hover:bg-[var(--accent-soft)] text-[var(--danger)]'
             onClick={() => {
               setMenuOpen(false)
               setShowConfirm(true)

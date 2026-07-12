@@ -12,6 +12,8 @@ import { API_URL } from './config'
 import type { Recipe } from './types/recipe'
 import Layout from './components/Layout'
 import { Link } from 'react-router-dom'
+import SettingsPage from './pages/SettingsPage'
+import ProfilePage from './pages/ProfilePage'
 
 function App() {
   const { token } = useAuth()
@@ -203,6 +205,30 @@ function App() {
               {recipeContent ?? (
                 <Layout>
                   <RecipeStepsPage recipes={recipes} />
+                </Layout>
+              )}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              {recipeContent ?? (
+                <Layout>
+                  <SettingsPage />
+                </Layout>
+              )}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              {recipeContent ?? (
+                <Layout>
+                  <ProfilePage />
                 </Layout>
               )}
             </ProtectedRoute>
