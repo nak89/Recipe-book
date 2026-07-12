@@ -1,6 +1,7 @@
 # 📖 Recipe Book — Frontend
 
 A personal cookbook web application built with React and TypeScript. Users can create accounts, manage their own recipe collections, and cook through step-by-step guides.
+<img width="1710" height="955" alt="image" src="https://github.com/user-attachments/assets/34a0acc5-24c1-4857-8c75-92a7dbe4a6b4" />
 
 ---
 
