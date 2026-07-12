@@ -26,6 +26,7 @@ function HomePage({ recipes, onRemove, onToggleFavourite }: HomePageProps) {
       return conditions.every(Boolean)
     })
   }, [recipes, filters])
+  
 
   const orderedRecipes = useMemo(() => {
     return [...filteredRecipes].sort((left, right) => Number(right.isFavourite) - Number(left.isFavourite))

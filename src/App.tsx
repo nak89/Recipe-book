@@ -239,4 +239,9 @@ function App() {
   )
 }
 
+console.log({
+  'Name': 'Daniel',
+  'Age': 19,
+  'Degree': 'Compsci'
+})
 export default App
